@@ -3,3 +3,8 @@ version: 1.0.0-SNAPSHOT
 name: MineCord
 author: Alice Caillaud
 api-version: 1.13
+commands:
+   todiscord:
+      description: Send last x messages to Discord (x <10, default is 1)
+      usage: /todiscord <x, optionnal>
+      aliases: [td]
