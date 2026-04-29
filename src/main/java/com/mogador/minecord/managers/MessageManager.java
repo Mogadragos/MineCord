@@ -1,7 +1,6 @@
 package com.mogador.minecord.managers;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Queue;
 
 import com.google.common.collect.EvictingQueue;
@@ -30,12 +29,13 @@ public class MessageManager {
         lastMessages.add(msg);
     }
 
-    public List<String> getLastMessages() {
+    public String[] getLastMessages() {
         return getLastMessages(QUEUE_SIZE);
     }
 
-    public List<String> getLastMessages(int nb) {
+    public String[] getLastMessages(int nb) {
         String[] messages = lastMessages.toArray(STRING_ARRAY);
-        return List.of(Arrays.copyOfRange(messages, 0, nb));
+        if(nb >= messages.length) return messages;
+        return Arrays.copyOfRange(messages, 0, nb);
     }
 }
