@@ -1,9 +1,13 @@
 package com.mogador.minecord.commands;
 
+import java.util.Arrays;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import com.mogador.minecord.managers.MessageManager;
 
 public class toDiscordCommand implements CommandExecutor {
     
@@ -14,11 +18,13 @@ public class toDiscordCommand implements CommandExecutor {
             return true;
         }
 
-        Player player = (Player) sender;
+        int nb = 1;
 
-        sender.sendMessage("Command received !");
+        if(args.length > 0 && args[0] != null) {
+            nb = Integer.valueOf(args[0]);
+        }
 
-        // Add your command logic here
+        System.out.println(Arrays.toString(MessageManager.getInstance().getLastMessages(nb)));
         
 
         return true;
