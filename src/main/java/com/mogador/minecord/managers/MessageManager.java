@@ -17,12 +17,13 @@ public class MessageManager {
     }
     private MessageManager() {}
 
-    private static final int QUEUE_SIZE = 10;
+    private int queueSize;
 
     Queue<String> lastMessages;
 
-    public void initialize() {
-        lastMessages = EvictingQueue.create(QUEUE_SIZE);
+    public void initialize(int queueSize) {
+        this.queueSize = queueSize;
+        lastMessages = EvictingQueue.create(queueSize);
     }
 
     public void add(String msg) {
@@ -30,8 +31,8 @@ public class MessageManager {
     }
 
     public List<String> getLastMessages(int nb) {
-        if(nb > QUEUE_SIZE) {
-            throw new IllegalArgumentException(String.format("You can't get more than %d messages", QUEUE_SIZE));
+        if(nb > queueSize) {
+            throw new IllegalArgumentException(String.format("You can't get more than %d messages", queueSize));
         }
 
         int offset = lastMessages.size() - nb;
