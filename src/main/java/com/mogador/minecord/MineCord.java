@@ -12,7 +12,7 @@ public class MineCord extends JavaPlugin {
     public void onEnable() {
         
         // Initialize managers
-        MessageManager.getInstance().initialize();
+        MessageManager.getInstance().initialize(getConfig().getInt("max_msg"));
         
         // Register listeners
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
