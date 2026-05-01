@@ -1,6 +1,6 @@
 package com.mogador.minecord.commands;
 
-import java.util.Arrays;
+import java.util.List;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -21,12 +21,22 @@ public class toDiscordCommand implements CommandExecutor {
         int nb = 1;
 
         if(args.length > 0 && args[0] != null) {
-            nb = Integer.valueOf(args[0]);
+            try {
+                nb = Integer.valueOf(args[0]);
+            } catch(NumberFormatException e) {
+                sender.sendMessage("The first argument should be an integer");
+                return true;
+            }
         }
 
-        System.out.println(Arrays.toString(MessageManager.getInstance().getLastMessages(nb)));
+        try {
+            List<String> lastMessages = MessageManager.getInstance().getLastMessages(nb);
+            System.out.println(lastMessages.toString());
+        } catch(IllegalArgumentException e) {
+            sender.sendMessage(e.getMessage());
+            return true;
+        }
         
-
         return true;
     }
 }

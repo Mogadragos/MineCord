@@ -1,7 +1,9 @@
 package com.mogador.minecord.managers;
 
-import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.Queue;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.EvictingQueue;
 
@@ -15,12 +17,10 @@ public class MessageManager {
     }
     private MessageManager() {}
 
-    static final int QUEUE_SIZE = 10;
-    static final String[] STRING_ARRAY = new String[QUEUE_SIZE];
-
+    private static final int QUEUE_SIZE = 10;
 
     Queue<String> lastMessages;
-    
+
     public void initialize() {
         lastMessages = EvictingQueue.create(QUEUE_SIZE);
     }
@@ -29,13 +29,17 @@ public class MessageManager {
         lastMessages.add(msg);
     }
 
-    public String[] getLastMessages() {
-        return getLastMessages(QUEUE_SIZE);
-    }
+    public List<String> getLastMessages(int nb) {
+        if(nb > QUEUE_SIZE) {
+            throw new IllegalArgumentException(String.format("You can't get more than %d messages", QUEUE_SIZE));
+        }
 
-    public String[] getLastMessages(int nb) {
-        String[] messages = lastMessages.toArray(STRING_ARRAY);
-        if(nb >= messages.length) return messages;
-        return Arrays.copyOfRange(messages, 0, nb);
+        int offset = lastMessages.size() - nb;
+        if(offset < 0) offset = 0;
+
+        return lastMessages.stream()
+            .skip(offset)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
     }
 }
