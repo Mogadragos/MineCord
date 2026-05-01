@@ -4,6 +4,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.mogador.minecord.commands.toDiscordCommand;
 import com.mogador.minecord.listeners.PlayerListener;
+import com.mogador.minecord.managers.DiscordManager;
 import com.mogador.minecord.managers.MessageManager;
 
 public class MineCord extends JavaPlugin {
@@ -12,6 +13,7 @@ public class MineCord extends JavaPlugin {
     public void onEnable() {
         
         // Initialize managers
+        DiscordManager.getInstance().initialize(this);
         MessageManager.getInstance().initialize(getConfig().getInt("max_msg"));
         
         // Register listeners
