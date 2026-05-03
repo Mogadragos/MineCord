@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -31,7 +32,11 @@ public class DiscordManager {
 
     private boolean ready = false;
     private JavaPlugin plugin;
+
     private String url;
+    private String name;
+    private String avatar_url;
+    private boolean isTts;
     
     public void initialize(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -47,19 +52,21 @@ public class DiscordManager {
                 plugin.getLogger().severe(ERROR_KEY_NOT_FOUND);
                 return;
             }
-
-            FileConfiguration config = YamlConfiguration.loadConfiguration(persistenceFile);
-            url = config.getString(YML_WEBHOOK_URL_KEY);
-            if(url == null) {
-                plugin.getLogger().severe(ERROR_KEY_NOT_FOUND);
-                return;
-            }
-
-            ready = true;
-
         } catch (IOException e) {
             plugin.getLogger().log(Level.SEVERE, "Error while creating " + SECRET_FILE_NAME, e);
         }
+
+        FileConfiguration secretConfig = YamlConfiguration.loadConfiguration(persistenceFile);
+        url = secretConfig.getString(YML_WEBHOOK_URL_KEY);
+        if(url == null) {
+            plugin.getLogger().severe(ERROR_KEY_NOT_FOUND);
+            return;
+        }
+
+        name = plugin.getConfig().getString("webhook.name", plugin.getName());
+        avatar_url = plugin.getConfig().getString("webhook.avatar_url");
+        isTts = plugin.getConfig().getBoolean("webhook.tts");
+        ready = true;
     }
 
     public void sendMessage(CommandSender sender, List<String> messages) {
@@ -70,6 +77,9 @@ public class DiscordManager {
 
         try {
             new DiscordWebhook(url)
+                .setUsername(name)
+                .setAvatarUrl(avatar_url)
+                .setTts(isTts)
                 .setContent(messages.toString())
                 .execute();
         } catch (URISyntaxException | IOException e) {

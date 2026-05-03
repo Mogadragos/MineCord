@@ -1,1 +1,8 @@
 max_msg: 10
+
+# Webhook
+# Url is in secret.yml file
+webhook:
+  name: "Alice Local bot"
+  avatar_url: null
+  tts: false
