@@ -2,7 +2,7 @@ package com.mogador.minecord;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.mogador.minecord.commands.toDiscordCommand;
+import com.mogador.minecord.commands.ToDiscordCommand;
 import com.mogador.minecord.listeners.PlayerListener;
 import com.mogador.minecord.managers.DiscordManager;
 import com.mogador.minecord.managers.MessageManager;
@@ -20,7 +20,7 @@ public class MineCord extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 
         // Set command executors
-        getCommand("todiscord").setExecutor(new toDiscordCommand());
+        getCommand("todiscord").setExecutor(new ToDiscordCommand());
         
         getLogger().info("MineCord has been enabled!");
     }
