@@ -28,6 +28,8 @@ public class DiscordWebhook {
     private boolean tts;
     private List<EmbedObject> embeds = new ArrayList<>();
 
+    private JSONObject json; // Used for logs
+
     /**
      * Constructs a new DiscordWebhook instance
      *
@@ -35,6 +37,10 @@ public class DiscordWebhook {
      */
     public DiscordWebhook(String url) {
         this.url = url;
+    }
+
+    public String getJsonAsString() {
+        return json != null ? json.toString() : "JSON was not created";
     }
 
     public DiscordWebhook setContent(String content) {
@@ -67,7 +73,7 @@ public class DiscordWebhook {
             throw new IllegalArgumentException("Set content or add at least one EmbedObject");
         }
 
-        JSONObject json = new JSONObject();
+        json = new JSONObject();
 
         json.put("content", this.content);
         json.put("username", this.username);

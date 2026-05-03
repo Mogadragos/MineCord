@@ -30,6 +30,7 @@ public class DiscordManager {
     private final String ERROR_KEY_NOT_FOUND = "You need to set " + YML_WEBHOOK_URL_KEY + " in the " + SECRET_FILE_NAME + " file";
     private final String ERROR_NOT_READY = "Error in loading [MineCord], can't send messages";
     private final String ERROR_SENDING_MSG = "Error when trying to send messages";
+    private final String REGEX_DISCORD_MARKDOWN = "\\*|_|`|\\{|}|\\[|]|\\(|\\)|#|\\+|-|\\.|!|~|>";
 
     private boolean ready = false;
     private JavaPlugin plugin;
@@ -83,18 +84,22 @@ public class DiscordManager {
 
         for(MessageData msg : messages) {
             webhook.addEmbed(new EmbedObject()
-                .setDescription(String.format("**<%s> %s**", msg.getAuthor(), msg.getMessage()))
+                .setDescription(String.format("**<%s> %s**",
+                    msg.getAuthor().replaceAll(REGEX_DISCORD_MARKDOWN, "\\\\$0").replace("\\", "\\\\"),
+                    msg.getMessage().replaceAll(REGEX_DISCORD_MARKDOWN, "\\\\$0").replace("\\", "\\\\")
+                ))
                 .setColor(null)
                 .setTimestamp(msg.getTimestamp())
             );
         }
 
-        webhook.addEmbed(new EmbedObject().setDescription("Send by <" + sender.getName() + ">"));
+        webhook.addEmbed(new EmbedObject().setDescription("Sent by <" + sender.getName() + ">"));
 
         try {
             webhook.execute();
         } catch (URISyntaxException | IOException e) {
-            plugin.getLogger().log(Level.SEVERE, ERROR_SENDING_MSG, e);
+            plugin.getLogger().log(Level.WARNING, ERROR_SENDING_MSG, e);
+            plugin.getLogger().warning(webhook.getJsonAsString());
             sender.sendMessage(ERROR_SENDING_MSG);
         };
     }
