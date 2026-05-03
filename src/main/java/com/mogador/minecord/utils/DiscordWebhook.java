@@ -83,6 +83,7 @@ public class DiscordWebhook {
                 jsonEmbed.put("title", embed.getTitle());
                 jsonEmbed.put("description", embed.getDescription());
                 jsonEmbed.put("url", embed.getUrl());
+                jsonEmbed.put("timestamp", embed.getTimestamp());
 
                 if (embed.getColor() != null) {
                     Color color = embed.getColor();
@@ -168,6 +169,7 @@ public class DiscordWebhook {
         private String title;
         private String description;
         private String url;
+        private String timestamp;
         private Color color;
 
         private Footer footer;
@@ -186,6 +188,10 @@ public class DiscordWebhook {
 
         public String getUrl() {
             return url;
+        }
+
+        public String getTimestamp() {
+            return timestamp;
         }
 
         public Color getColor() {
@@ -224,6 +230,11 @@ public class DiscordWebhook {
 
         public EmbedObject setUrl(String url) {
             this.url = url;
+            return this;
+        }
+
+        public EmbedObject setTimestamp(String timestamp) {
+            this.timestamp = timestamp;
             return this;
         }
 

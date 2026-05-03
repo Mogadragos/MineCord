@@ -11,7 +11,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.mogador.minecord.data.MessageData;
 import com.mogador.minecord.utils.DiscordWebhook;
+import com.mogador.minecord.utils.DiscordWebhook.EmbedObject;
 
 public class DiscordManager {
     private static DiscordManager instance;
@@ -68,19 +70,29 @@ public class DiscordManager {
         ready = true;
     }
 
-    public void sendMessage(CommandSender sender, List<String> messages) {
+    public void sendMessage(CommandSender sender, List<MessageData> messages) {
         if(!ready) {
             plugin.getLogger().warning(ERROR_NOT_READY);
             sender.sendMessage(ERROR_NOT_READY);
         }
 
+        DiscordWebhook webhook = new DiscordWebhook(url)
+            .setUsername(name)
+            .setAvatarUrl(avatar_url)
+            .setTts(isTts);
+
+        for(MessageData msg : messages) {
+            webhook.addEmbed(new EmbedObject()
+                .setDescription(String.format("**<%s> %s**", msg.getAuthor(), msg.getMessage()))
+                .setColor(null)
+                .setTimestamp(msg.getTimestamp())
+            );
+        }
+
+        webhook.addEmbed(new EmbedObject().setDescription("Send by <" + sender.getName() + ">"));
+
         try {
-            new DiscordWebhook(url)
-                .setUsername(name)
-                .setAvatarUrl(avatar_url)
-                .setTts(isTts)
-                .setContent(messages.toString())
-                .execute();
+            webhook.execute();
         } catch (URISyntaxException | IOException e) {
             plugin.getLogger().log(Level.SEVERE, ERROR_SENDING_MSG, e);
             sender.sendMessage(ERROR_SENDING_MSG);

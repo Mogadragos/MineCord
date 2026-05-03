@@ -1,11 +1,14 @@
 package com.mogador.minecord.managers;
 
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.EvictingQueue;
+import com.mogador.minecord.data.MessageData;
 
 public class MessageManager {
     private static MessageManager instance;
@@ -19,18 +22,23 @@ public class MessageManager {
 
     private int queueSize;
 
-    Queue<String> lastMessages;
+    Queue<MessageData> lastMessages;
 
     public void initialize(int queueSize) {
         this.queueSize = queueSize;
         lastMessages = EvictingQueue.create(queueSize);
     }
 
-    public void add(String msg) {
-        lastMessages.add(msg);
+    public void add(String player, String msg) {
+        Instant instant = Instant.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT;
+        String formattedDate = formatter.format(instant);
+
+        
+        lastMessages.add(new MessageData(player, msg, formattedDate));
     }
 
-    public List<String> getLastMessages(int nb) {
+    public List<MessageData> getLastMessages(int nb) {
         if(nb > queueSize) {
             throw new IllegalArgumentException(String.format("You can't get more than %d messages", queueSize));
         }

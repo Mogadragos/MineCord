@@ -7,6 +7,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.mogador.minecord.data.MessageData;
 import com.mogador.minecord.managers.DiscordManager;
 import com.mogador.minecord.managers.MessageManager;
 
@@ -31,7 +32,7 @@ public class ToDiscordCommand implements CommandExecutor {
         }
 
         try {
-            List<String> lastMessages = MessageManager.getInstance().getLastMessages(nb);
+            List<MessageData> lastMessages = MessageManager.getInstance().getLastMessages(nb);
             DiscordManager.getInstance().sendMessage(sender, lastMessages);
         } catch(IllegalArgumentException e) {
             sender.sendMessage(e.getMessage());
