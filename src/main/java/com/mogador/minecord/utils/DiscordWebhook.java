@@ -91,7 +91,7 @@ public class DiscordWebhook {
                 jsonEmbed.put("title", embed.getTitle());
                 jsonEmbed.put("description", embed.getDescription());
                 jsonEmbed.put("url", embed.getUrl());
-                jsonEmbed.put("timestamp", DateTimeFormatter.ISO_INSTANT.format(embed.getTimestamp()));
+                jsonEmbed.put("timestamp", embed.getTimestamp() != null ? DateTimeFormatter.ISO_INSTANT.format(embed.getTimestamp()) : null);
 
                 if (embed.getColor() != null) {
                     Color color = embed.getColor();

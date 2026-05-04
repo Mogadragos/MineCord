@@ -129,7 +129,7 @@ public class ToDiscordCommand implements TabExecutor {
 
     private boolean onToDiscord(Player sender, int nb) {
         try {
-            sender.sendMessage("Sending " + nb + " messages to Discord");
+            sender.sendMessage("Trying to send " + nb + " messages to Discord");
             List<MessageData> lastMessages = MessageManager.getInstance().getLastMessages(nb);
             DiscordManager.getInstance().sendMessages(sender, lastMessages);
         } catch(IllegalArgumentException e) {
