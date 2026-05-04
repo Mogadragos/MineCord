@@ -6,12 +6,14 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.logging.Level;
 
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.mogador.minecord.data.MessageData;
 import com.mogador.minecord.utils.DiscordWebhook;
+import com.mogador.minecord.utils.DiscordWebhook.EmbedObject;
 
 public class DiscordManager {
     private static DiscordManager instance;
@@ -28,6 +30,7 @@ public class DiscordManager {
     private final String ERROR_KEY_NOT_FOUND = "You need to set " + YML_WEBHOOK_URL_KEY + " in the " + SECRET_FILE_NAME + " file";
     private final String ERROR_NOT_READY = "Error in loading [MineCord], can't send messages";
     private final String ERROR_SENDING_MSG = "Error when trying to send messages";
+    private final String REGEX_DISCORD_MARKDOWN = "\\*|_|`|\\{|}|\\[|]|\\(|\\)|#|\\+|-|\\.|!|~|>";
 
     private boolean ready = false;
     private JavaPlugin plugin;
@@ -68,22 +71,55 @@ public class DiscordManager {
         ready = true;
     }
 
-    public void sendMessage(CommandSender sender, List<String> messages) {
+    public void sendMessage(Player player, List<MessageData> messages) {
         if(!ready) {
             plugin.getLogger().warning(ERROR_NOT_READY);
-            sender.sendMessage(ERROR_NOT_READY);
+            player.sendMessage(ERROR_NOT_READY);
         }
 
+        DiscordWebhook webhook = new DiscordWebhook(url)
+            .setUsername(name)
+            .setAvatarUrl(avatar_url)
+            .setTts(isTts);
+
+        for(MessageData data : messages) {
+            webhook.addEmbed(new EmbedObject()
+                .setDescription(buildDescription(data.getPlayer(), data.getMessage()))
+                .setColor(PlayerConfigManager.getInstance().getColor(data.getPlayer()))
+                .setTimestamp(data.getTimestamp())
+            );
+        }
+
+        webhook.addEmbed(new EmbedObject().setDescription("Sent by " + buildPlayerName(player)));
+
         try {
-            new DiscordWebhook(url)
-                .setUsername(name)
-                .setAvatarUrl(avatar_url)
-                .setTts(isTts)
-                .setContent(messages.toString())
-                .execute();
+            webhook.execute();
         } catch (URISyntaxException | IOException e) {
-            plugin.getLogger().log(Level.SEVERE, ERROR_SENDING_MSG, e);
-            sender.sendMessage(ERROR_SENDING_MSG);
+            plugin.getLogger().log(Level.WARNING, ERROR_SENDING_MSG, e);
+            plugin.getLogger().warning(webhook.getJsonAsString());
+            player.sendMessage(ERROR_SENDING_MSG);
         };
+    }
+
+    private String buildDescription(Player player, String msg) {
+
+        String description = "**";
+        description += buildPlayerName(player);
+        description += msg.replaceAll(REGEX_DISCORD_MARKDOWN, "\\\\$0").replace("\\", "\\\\");
+        description += "**";
+
+        return description;
+    }
+
+    private String buildPlayerName(Player player) {
+        String discordId = PlayerConfigManager.getInstance().getDiscordId(player);
+
+        String playerName = "<" + player.getName().replaceAll(REGEX_DISCORD_MARKDOWN, "\\\\$0").replace("\\", "\\\\");
+        if(discordId != null) {
+            playerName += " <@" + discordId + ">";
+        }
+        playerName += "> ";
+
+        return playerName;
     }
 }

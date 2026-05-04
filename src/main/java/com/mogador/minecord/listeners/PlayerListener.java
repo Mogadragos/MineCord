@@ -11,6 +11,6 @@ public class PlayerListener implements Listener {
     
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
-        MessageManager.getInstance().add(event.getMessage());
+        MessageManager.getInstance().add(event.getPlayer(), event.getMessage());
     }
 }
