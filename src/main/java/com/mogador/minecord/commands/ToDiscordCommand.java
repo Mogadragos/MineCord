@@ -1,11 +1,12 @@
 package com.mogador.minecord.commands;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import com.mogador.minecord.data.MessageData;
@@ -14,7 +15,7 @@ import com.mogador.minecord.managers.MessageManager;
 import com.mogador.minecord.managers.PlayerConfigManager;
 import com.mogador.minecord.utils.Utils;
 
-public class ToDiscordCommand implements CommandExecutor {
+public class ToDiscordCommand implements TabExecutor {
 
     private final String ARG_HELP = "help";
     private final String ARG_COLOR = "color";
@@ -96,7 +97,7 @@ public class ToDiscordCommand implements CommandExecutor {
 
         Color color = PlayerConfigManager.getInstance().getColor(sender);
         if(color != null) {
-            String hex = "#" + Integer.toHexString(color.getRGB()).substring(2);
+            String hex = "#" + (0xFFFFFF & color.getRGB());
             sender.sendMessage(Utils.colorize(hex, color));
         } else {
             sender.sendMessage("You don't have configured any color");
@@ -128,12 +129,34 @@ public class ToDiscordCommand implements CommandExecutor {
 
     private boolean onToDiscord(Player sender, int nb) {
         try {
+            sender.sendMessage("Sending " + nb + " messages to Discord");
             List<MessageData> lastMessages = MessageManager.getInstance().getLastMessages(nb);
-            DiscordManager.getInstance().sendMessage(sender, lastMessages);
+            DiscordManager.getInstance().sendMessages(sender, lastMessages);
         } catch(IllegalArgumentException e) {
             sender.sendMessage(e.getMessage());
         }
 
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        List<String> completions = new ArrayList<>();
+
+        // If typing the first argument
+        if (args.length == 1) {
+            List<String> options = List.of(ARG_HELP, ARG_COLOR, ARG_DISCORD_ID);
+            for (String option : options) {
+                if (option.toLowerCase().startsWith(args[0].toLowerCase())) {
+                    completions.add(option);
+                }
+            }
+        }
+        // If typing the second argument and first was 'color' or 'id'
+        else if (args.length == 2 && (ARG_COLOR.equalsIgnoreCase(args[0]) || ARG_DISCORD_ID.equalsIgnoreCase(args[0]))) {
+            completions.add(ARG_RESET);
+        }
+
+        return completions;
     }
 }
