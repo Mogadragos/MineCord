@@ -6,7 +6,7 @@
 
     <groupId>com.mogador.minecord</groupId>
     <artifactId>MineCord</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     
     <name>MineCord</name>
     <url>https://github.com/Mogadragos/MineCord</url>
