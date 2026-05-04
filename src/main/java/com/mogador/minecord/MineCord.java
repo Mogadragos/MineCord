@@ -1,5 +1,6 @@
 package com.mogador.minecord;
 
+import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -24,13 +25,18 @@ public class MineCord extends JavaPlugin {
         PersistenceManager.getInstance().initialize(this, "users.yml");
         PlayerConfigManager.getInstance().initialize(this);
         DiscordManager.getInstance().initialize(this);
-        MessageManager.getInstance().initialize(getConfig().getInt("max_msg"));
+        MessageManager.getInstance().initialize(getConfig().getInt("max_msg", 10));
         
         // Register listeners
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
 
         // Set command executors
-        getCommand("todiscord").setExecutor(new ToDiscordCommand());
+        PluginCommand cmd = getCommand("todiscord");
+        if (cmd != null) {
+            cmd.setExecutor(new ToDiscordCommand());
+        } else {
+            getLogger().severe("Command 'todiscord' is missing from plugin.yml");
+        }
         
         getLogger().info("MineCord has been enabled!");
     }
