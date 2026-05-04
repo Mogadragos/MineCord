@@ -1,7 +1,6 @@
 package com.mogador.minecord.managers;
 
 import java.time.Instant;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
@@ -10,6 +9,7 @@ import java.util.stream.Collectors;
 import org.bukkit.entity.Player;
 
 import com.google.common.collect.EvictingQueue;
+import com.google.common.collect.Queues;
 import com.mogador.minecord.data.MessageData;
 
 public class MessageManager {
@@ -28,16 +28,11 @@ public class MessageManager {
 
     public void initialize(int queueSize) {
         this.queueSize = queueSize;
-        lastMessages = EvictingQueue.create(queueSize);
+        lastMessages = Queues.synchronizedQueue(EvictingQueue.create(queueSize));
     }
 
     public void add(Player player, String msg) {
-        Instant instant = Instant.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT;
-        String formattedDate = formatter.format(instant);
-
-        
-        lastMessages.add(new MessageData(player, msg, formattedDate));
+        lastMessages.add(new MessageData(player, msg, Instant.now()));
     }
 
     public List<MessageData> getLastMessages(int nb) {
