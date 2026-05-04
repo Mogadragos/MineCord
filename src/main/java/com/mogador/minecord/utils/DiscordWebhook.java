@@ -7,6 +7,8 @@ import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -89,7 +91,7 @@ public class DiscordWebhook {
                 jsonEmbed.put("title", embed.getTitle());
                 jsonEmbed.put("description", embed.getDescription());
                 jsonEmbed.put("url", embed.getUrl());
-                jsonEmbed.put("timestamp", embed.getTimestamp());
+                jsonEmbed.put("timestamp", embed.getTimestamp() != null ? DateTimeFormatter.ISO_INSTANT.format(embed.getTimestamp()) : null);
 
                 if (embed.getColor() != null) {
                     Color color = embed.getColor();
@@ -175,7 +177,7 @@ public class DiscordWebhook {
         private String title;
         private String description;
         private String url;
-        private String timestamp;
+        private Instant timestamp;
         private Color color;
 
         private Footer footer;
@@ -196,7 +198,7 @@ public class DiscordWebhook {
             return url;
         }
 
-        public String getTimestamp() {
+        public Instant getTimestamp() {
             return timestamp;
         }
 
@@ -239,7 +241,7 @@ public class DiscordWebhook {
             return this;
         }
 
-        public EmbedObject setTimestamp(String timestamp) {
+        public EmbedObject setTimestamp(Instant timestamp) {
             this.timestamp = timestamp;
             return this;
         }

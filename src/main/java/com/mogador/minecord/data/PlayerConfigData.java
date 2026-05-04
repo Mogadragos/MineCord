@@ -38,8 +38,12 @@ public class PlayerConfigData implements ConfigurationSerializable {
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<>(2);
-        map.put("color", getColor().getRGB());
-        map.put("discordId", getDiscordId());
+        map.put("color", color != null ? color.getRGB() : null);
+        map.put("discordId", discordId);
         return map;
+    }
+
+    public static PlayerConfigData deserialize(Map<String, Object> map) {
+        return new PlayerConfigData(map);
     }
 }

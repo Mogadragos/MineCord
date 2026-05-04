@@ -8,6 +8,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.mogador.minecord.data.PlayerConfigData;
+
 public class PersistenceManager {
 
     // Singleton
@@ -50,12 +52,12 @@ public class PersistenceManager {
         return config.getKeys(false);
     }
 
-    public <T> T getObject(String key, Class<T> clazz) {
-        return config.getObject(key, clazz);
+    public PlayerConfigData getPlayerConfig(String key) {
+        return config.getSerializable(key, PlayerConfigData.class);
     }
 
-    public <T> void setObject(String key, T object) {
-        config.set(key, object);
+    public void setPlayerConfig(String key, PlayerConfigData data) {
+        config.set(key, data);
         save();
     }
 

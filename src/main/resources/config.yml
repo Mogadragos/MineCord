@@ -1,4 +1,4 @@
-max_msg: 10
+max_msg: 9
 
 # Webhook
 # Url is in secret.yml file
