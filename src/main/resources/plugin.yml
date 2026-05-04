@@ -1,5 +1,10 @@
 main: com.mogador.minecord.MineCord
-version: 1.0.0-SNAPSHOT
+version: 1.0.0
 name: MineCord
 author: Alice Caillaud
-api-version: 1.13
+api-version: 1.20
+commands:
+   todiscord:
+      description: Send last x messages to Discord (x <10, default is 1)
+      usage: /todiscord <x, optionnal> | help | color | id
+      aliases: [td]
