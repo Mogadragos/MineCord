@@ -1,5 +1,5 @@
 main: com.mogador.minecord.MineCord
-version: 1.0.0-SNAPSHOT
+version: 1.0.0
 name: MineCord
 author: Alice Caillaud
 api-version: 1.13
