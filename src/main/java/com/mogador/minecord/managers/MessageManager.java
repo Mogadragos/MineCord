@@ -7,6 +7,8 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
+import org.bukkit.entity.Player;
+
 import com.google.common.collect.EvictingQueue;
 import com.mogador.minecord.data.MessageData;
 
@@ -29,7 +31,7 @@ public class MessageManager {
         lastMessages = EvictingQueue.create(queueSize);
     }
 
-    public void add(String player, String msg) {
+    public void add(Player player, String msg) {
         Instant instant = Instant.now();
         DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT;
         String formattedDate = formatter.format(instant);

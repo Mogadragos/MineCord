@@ -1,19 +1,21 @@
 package com.mogador.minecord.data;
 
+import org.bukkit.entity.Player;
+
 public class MessageData {
-    String author;
+    Player player;
     String message;
     String timestamp;
     String format;
     
-    public MessageData(String author, String message, String timestamp) {
-        this.author = author;
+    public MessageData(Player player, String message, String timestamp) {
+        this.player = player;
         this.message = message;
         this.timestamp = timestamp;
     }
 
-    public String getAuthor() {
-        return author;
+    public Player getPlayer() {
+        return player;
     }
 
     public String getMessage() {

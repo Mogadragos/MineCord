@@ -6,9 +6,9 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.logging.Level;
 
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.mogador.minecord.data.MessageData;
@@ -71,10 +71,10 @@ public class DiscordManager {
         ready = true;
     }
 
-    public void sendMessage(CommandSender sender, List<MessageData> messages) {
+    public void sendMessage(Player player, List<MessageData> messages) {
         if(!ready) {
             plugin.getLogger().warning(ERROR_NOT_READY);
-            sender.sendMessage(ERROR_NOT_READY);
+            player.sendMessage(ERROR_NOT_READY);
         }
 
         DiscordWebhook webhook = new DiscordWebhook(url)
@@ -82,25 +82,44 @@ public class DiscordManager {
             .setAvatarUrl(avatar_url)
             .setTts(isTts);
 
-        for(MessageData msg : messages) {
+        for(MessageData data : messages) {
             webhook.addEmbed(new EmbedObject()
-                .setDescription(String.format("**<%s> %s**",
-                    msg.getAuthor().replaceAll(REGEX_DISCORD_MARKDOWN, "\\\\$0").replace("\\", "\\\\"),
-                    msg.getMessage().replaceAll(REGEX_DISCORD_MARKDOWN, "\\\\$0").replace("\\", "\\\\")
-                ))
-                .setColor(null)
-                .setTimestamp(msg.getTimestamp())
+                .setDescription(buildDescription(data.getPlayer(), data.getMessage()))
+                .setColor(PlayerConfigManager.getInstance().getColor(data.getPlayer()))
+                .setTimestamp(data.getTimestamp())
             );
         }
 
-        webhook.addEmbed(new EmbedObject().setDescription("Sent by <" + sender.getName() + ">"));
+        webhook.addEmbed(new EmbedObject().setDescription("Sent by " + buildPlayerName(player)));
 
         try {
             webhook.execute();
         } catch (URISyntaxException | IOException e) {
             plugin.getLogger().log(Level.WARNING, ERROR_SENDING_MSG, e);
             plugin.getLogger().warning(webhook.getJsonAsString());
-            sender.sendMessage(ERROR_SENDING_MSG);
+            player.sendMessage(ERROR_SENDING_MSG);
         };
+    }
+
+    private String buildDescription(Player player, String msg) {
+
+        String description = "**";
+        description += buildPlayerName(player);
+        description += msg.replaceAll(REGEX_DISCORD_MARKDOWN, "\\\\$0").replace("\\", "\\\\");
+        description += "**";
+
+        return description;
+    }
+
+    private String buildPlayerName(Player player) {
+        String discordId = PlayerConfigManager.getInstance().getDiscordId(player);
+
+        String playerName = "<" + player.getName().replaceAll(REGEX_DISCORD_MARKDOWN, "\\\\$0").replace("\\", "\\\\");
+        if(discordId != null) {
+            playerName += " <@" + discordId + ">";
+        }
+        playerName += "> ";
+
+        return playerName;
     }
 }
