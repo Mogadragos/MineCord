@@ -25,7 +25,7 @@ public class MineCord extends JavaPlugin {
         PersistenceManager.getInstance().initialize(this, "users.yml");
         PlayerConfigManager.getInstance().initialize(this);
         DiscordManager.getInstance().initialize(this);
-        MessageManager.getInstance().initialize(getConfig().getInt("max_msg", 10));
+        MessageManager.getInstance().initialize(getConfig().getInt("max_msg", 9));
         
         // Register listeners
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
