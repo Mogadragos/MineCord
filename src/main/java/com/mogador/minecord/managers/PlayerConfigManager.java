@@ -24,7 +24,7 @@ public class PlayerConfigManager {
 
     public void initialize(JavaPlugin plugin) {
         for(String playerId : PersistenceManager.getInstance().getKeys()) {
-            PlayerConfigData data = PersistenceManager.getInstance().getObject(playerId, PlayerConfigData.class);
+            PlayerConfigData data = PersistenceManager.getInstance().getPlayerConfig(playerId);
             configMap.put(UUID.fromString(playerId), data);
         }
     }
@@ -59,6 +59,6 @@ public class PlayerConfigManager {
     }
 
     private void persist(Player player) {
-        PersistenceManager.getInstance().setObject(player.getUniqueId().toString(), getConfig(player));
+        PersistenceManager.getInstance().setPlayerConfig(player.getUniqueId().toString(), getConfig(player));
     }
 }
